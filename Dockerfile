@@ -21,6 +21,7 @@ USER postgres
 RUN /etc/init.d/postgresql start &&\
     psql --command "CREATE USER graphite WITH PASSWORD 'password';" && \
     psql --command "CREATE DATABASE graphite WITH OWNER graphite;"
+USER root
 
 EXPOSE 22
 CMD ["/usr/bin/supervisord"]
