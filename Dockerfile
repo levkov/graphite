@@ -41,5 +41,5 @@ RUN a2dissite 000-default &&\
     a2ensite apache2-graphite
 
 
-EXPOSE 22 80 2003
+EXPOSE 22 80 2003 2003/udp 2004 7002
 CMD ["/usr/bin/supervisord"]
