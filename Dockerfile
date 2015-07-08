@@ -21,7 +21,7 @@ COPY conf/graphite-carbon /etc/default/graphite-carbon
 COPY conf/carbon.conf /etc/carbon/carbon.conf
 COPY conf/storage-schemas.conf /etc/carbon/storage-schemas.conf
 COPY conf/storage-aggregation.conf /etc/carbon/storage-aggregation.conf
-COPY conf/collectd.conf /etc/collectd/collectd.conf
+
 ADD scripts/mkadmin.py /usr/bin/mkadmin.py
 RUN chmod 755          /usr/bin/mkadmin.py
 
