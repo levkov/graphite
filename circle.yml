@@ -1,0 +1,14 @@
+machine:
+  services:
+    - docker
+    
+dependencies:
+  override:
+    - docker info
+    - docker build -t levkov/graphite .
+
+test:
+  override:
+    - docker run -h graphite -p 222:22 --name graphite -d levkov/graphite; sleep 20
+    - nc -zv localhost 222
+    
