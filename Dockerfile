@@ -15,13 +15,21 @@ RUN apt-get update && apt-get install graphite-web graphite-carbon postgresql li
     echo "export VISIBLE=now" >> /etc/profile && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY conf/local_settings.py /etc/graphite/local_settings.py
+COPY conf/graphite-carbon /etc/default/graphite-carbon
+COPY conf/carbon.conf /etc/carbon/carbon.conf
+COPY conf/storage-schemas.conf /etc/carbon/storage-schemas.conf
+COPY conf/storage-aggregation.conf /etc/carbon/storage-aggregation.conf
 
 USER postgres
 RUN /etc/init.d/postgresql start &&\
     psql --command "CREATE USER graphite WITH PASSWORD 'password';" && \
-    psql --command "CREATE DATABASE graphite WITH OWNER graphite;"
+    psql --command "CREATE DATABASE graphite WITH OWNER graphite;" && \ 
+    /etc/init.d/postgresql stop
 USER root
+RUN /etc/init.d/postgresql start &&\
+    yes "no" | graphite-manage syncdb
 
 EXPOSE 22
 CMD ["/usr/bin/supervisord"]
