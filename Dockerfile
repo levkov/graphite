@@ -7,7 +7,7 @@ RUN locale-gen en_US.UTF-8
 RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
-RUN apt-get update && apt-get install graphite-web graphite-carbon postgresql libpq-dev python-psycopg2 supervisor openssh-server vim apache2 libapache2-mod-wsgi -y && \
+RUN apt-get update && apt-get install graphite-web graphite-carbon postgresql libpq-dev python-psycopg2 supervisor openssh-server vim apache2 libapache2-mod-wsgi collectd collectd-utils -y && \
     mkdir -p /var/run/sshd /var/log/supervisor && \
     echo 'root:ContaineR' | chpasswd && \
     sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
