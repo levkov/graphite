@@ -7,7 +7,7 @@ RUN locale-gen en_US.UTF-8
 RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
-RUN apt-get update && apt-get install graphite-web graphite-carbon postgresql libpq-dev python-psycopg2 supervisor openssh-server vim -y && \
+RUN apt-get update && apt-get install graphite-web graphite-carbon postgresql libpq-dev python-psycopg2 supervisor openssh-server vim apache2 libapache2-mod-wsgi -y && \
     mkdir -p /var/run/sshd /var/log/supervisor && \
     echo 'root:ContaineR' | chpasswd && \
     sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
@@ -22,6 +22,9 @@ COPY conf/carbon.conf /etc/carbon/carbon.conf
 COPY conf/storage-schemas.conf /etc/carbon/storage-schemas.conf
 COPY conf/storage-aggregation.conf /etc/carbon/storage-aggregation.conf
 
+ADD scripts/mkadmin.py /usr/bin/mkadmin.py
+RUN chmod 755          /usr/bin/mkadmin.py
+
 USER postgres
 RUN /etc/init.d/postgresql start &&\
     psql --command "CREATE USER graphite WITH PASSWORD 'password';" && \
@@ -29,7 +32,14 @@ RUN /etc/init.d/postgresql start &&\
     /etc/init.d/postgresql stop
 USER root
 RUN /etc/init.d/postgresql start &&\
-    yes "no" | graphite-manage syncdb
+    graphite-manage syncdb --noinput &&\
+    /usr/bin/mkadmin.py && \
+    /etc/init.d/postgresql stop
 
-EXPOSE 22
+RUN a2dissite 000-default &&\
+    cp /usr/share/graphite-web/apache2-graphite.conf /etc/apache2/sites-available &&\
+    a2ensite apache2-graphite
+
+
+EXPOSE 22 80
 CMD ["/usr/bin/supervisord"]
