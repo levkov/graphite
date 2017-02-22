@@ -22,7 +22,7 @@ COPY conf/carbon.conf /etc/carbon/carbon.conf
 COPY conf/storage-schemas.conf /etc/carbon/storage-schemas.conf
 COPY conf/storage-aggregation.conf /etc/carbon/storage-aggregation.conf
 
-ADD scripts/mkadmin.py /usr/bin/mkadmin.py
+COPY scripts/mkadmin.py /usr/bin/mkadmin.py
 RUN chmod 755          /usr/bin/mkadmin.py
 
 USER postgres
@@ -33,7 +33,7 @@ RUN /etc/init.d/postgresql start &&\
 USER root
 RUN /etc/init.d/postgresql start &&\
     graphite-manage syncdb --noinput &&\
-    /usr/bin/mkadmin.py && \
+    python /usr/bin/mkadmin.py && \
     /etc/init.d/postgresql stop
 
 RUN a2dissite 000-default &&\
