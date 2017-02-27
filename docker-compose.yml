@@ -1,0 +1,8 @@
+graphite:
+  build: .
+  ports:
+  - "9001:9001"
+  - "222:22"
+  - "80:80"
+  hostname: graphite
+
