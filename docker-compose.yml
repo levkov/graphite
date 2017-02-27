@@ -4,5 +4,7 @@ graphite:
   - "9001:9001"
   - "222:22"
   - "80:80"
+  volumes:
+  - graphite-data:/var/lib/graphite/whisper
   hostname: graphite
 
